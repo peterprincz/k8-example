@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    deployment: postgres-deployment
+spec:
+  replicas: 2 # 2 db pod legyen mindig futtatva
+  selector:
+    matchLabels:
+      app: python-web
+      # any-label: any-value
+  template:
+    metadata:
+      labels:
+        app: python-web
+        # any-label: any-value
+        # Itt lehetnek további pod-ok definiciói, de azokat a selector-nak megfelelően kell definiálni különben ignorálva lesznek
+        # a deployment által. Ez lesz hivatkozta a external service-eknél.
+    spec:
+      containers:
+      - name: python-web
+        image: python-web:latest
+        imagePullPolicy: Never # Lokális image
+        ports:
+        - containerPort: 3000 # Megegyezik a python app portjával, tehát 3000:3000 lesz
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+        env:
+        # Környezeti változók beállitása secret-ből és configmap-ből
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: POSTGRES_DB
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: application-config
+                key: database_url

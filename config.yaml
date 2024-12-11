@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-config
+  labels:
+    app: webapp-deployment
+data:
+  database_url: postgres-internal-service # Service neve lesz
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config
+  labels:
+    app: database
+data:
+  init.sql: |
+    -- Example SQL script
+    CREATE TABLE example_table (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL
+    );
+    INSERT INTO example_table (name) VALUES ('Sample Data');

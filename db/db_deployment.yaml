@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    deployment: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database # Mely podokra vonatkozik ez a deployment. Itt látható lentebb, és redundánsnak tünhet, de lehetnek olyan containerek
+      # is specifikálva, amik nem tartoznak a deployment-hez, és ezeket a selector-nak megfelelően kell definiálni különben ignorálva lesznek
+      # illetve lehetnek olyan podok is amik nem ebben a file-ban vannak definiálva.
+  template:
+    metadata:
+      labels:
+       app: database # A pod-okra vonatkozó label, amit a selectorok megtalálnak (mint a deployment és a service)
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          imagePullPolicy: Never # Lokális image
+          ports:
+            - containerPort: 5432 # Megegyezik a postgres default portjával, tehát 5432:5432 lesz
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          env:
+            # Környezeti változók beállitása secret-ből
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+              # init script mountolása a postgres konténerbe, illetve a postgres data könyvtár mountolása (ilyenkor a host docker belső 
+              # könyvtárát mountoljuk a konténerbe)
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+      volumes:
+        - name: postgres-data
+          emptyDir: {} # (a temporary directory that shares a pod's lifetime)
+        - name: init-script
+          configMap:
+            name: database-config
