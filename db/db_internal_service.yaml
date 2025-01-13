@@ -7,5 +7,5 @@ spec:
   selector:
     app: database # A service-nek a podokat kell tudnia, hogy melyik podokat kell elérnie
   ports:
-    - port: 5432       # Port exposed by the service
-      targetPort: 5432 # containerPort of pods targeted by the service
+    - port: 5432       
+      targetPort: 5432 

@@ -5,7 +5,7 @@ metadata:
   labels:
     deployment: postgres-deployment
 spec:
-  replicas: 1
+  replicas: 1 # Hány darab
   selector:
     matchLabels:
       app: database # Mely podokra vonatkozik ez a deployment. Itt látható lentebb, és redundánsnak tünhet, de lehetnek olyan containerek

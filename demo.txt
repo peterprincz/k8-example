@@ -1,0 +1,33 @@
+Mi az a Kubernetes?
+
+A Kubernetes egy nyílt forráskódú platform, amely automatizálja a konténerek telepítését, 
+skálázását és menedzsmentjét. Alapvetően arra szolgál, hogy segítsen a konténerezett alkalmazások futtatásában egy elosztott rendszeren belül.
+
+Fő komponensek
+
+Pod: A Kubernetes legkisebb egysége, amely egy vagy több konténert tartalmaz.
+
+Node: Egy szerver a Kubernetes klaszterben, amely futtatja a Podokat. (Egy valós gép vagy virtuális gép)
+
+Deployment:
+Egy objektum, amely deklaratív módon meghatározza, 
+hogyan kell futtatni és menedzselni a Podokat, beleértve a replikák számát, az alkalmazott konténerképeket, 
+és a frissítési stratégiákat. 
+A Deployment biztosítja, hogy a kívánt állapot megvalósuljon (pl. mindig legyen 3 replika futóban).
+
+Service:
+Egy absztrakció, amely lehetővé teszi, hogy a Podok dinamikus IP-címeit kezeljük.
+Egy Service biztosít egy fix hálózati endpointot, amely egy logikai Pod készletre mutat.
+Ez lehetővé teszi a Podok közötti kommunikációt anélkül, hogy tudnánk az egyes Podok aktuális IP-címét.
+
+Kubernetes Architektúra
+
+API Server: A Kubernetes API-jának a belépési pontja, amely fogadja és kezeli a REST API hívásokat.
+
+Controller Manager: Kezeli a különböző kontrollerek (pl. ReplicaSet, Deployment) futtatását, hogy biztosítsa a klaszter állapotának folyamatos fenntartását.
+
+Scheduler: Felelős az új Podok hozzárendeléséért a Node-okhoz a rendelkezésre álló erőforrások alapján.
+
+etcd: Egy elosztott kulcs-érték tár, amely a klaszter állapotát tárolja, és a Kubernetes magas rendelkezésre állását biztosítja.
+
+Worker node: Itt futnak a Podok, és tartalmazzák a kubeletet és a kube-proxyt.
